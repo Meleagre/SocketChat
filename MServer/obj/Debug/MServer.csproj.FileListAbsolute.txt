@@ -1,0 +1,2 @@
+c:\users\meleagre\documents\visual studio 2012\Projects\ClientServerApps\MServer\bin\Debug\MServer.exe.config
+C:\dev\Projects\ClientServerApps\MServer\bin\Debug\MServer.exe.config
