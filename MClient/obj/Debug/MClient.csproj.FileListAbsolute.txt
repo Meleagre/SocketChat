@@ -1,0 +1,8 @@
+C:\dev\Projects\ClientServerModel\MClient\bin\Debug\MClient.exe.config
+C:\dev\Projects\ClientServerModel\MClient\bin\Debug\MClient.exe
+C:\dev\Projects\ClientServerModel\MClient\bin\Debug\MClient.pdb
+C:\dev\Projects\ClientServerModel\MClient\bin\Debug\MSocket.dll
+C:\dev\Projects\ClientServerModel\MClient\bin\Debug\MSocket.pdb
+C:\dev\Projects\ClientServerModel\MClient\obj\Debug\MClient.csprojResolveAssemblyReference.cache
+C:\dev\Projects\ClientServerModel\MClient\obj\Debug\MClient.exe
+C:\dev\Projects\ClientServerModel\MClient\obj\Debug\MClient.pdb

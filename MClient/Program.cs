@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using MSocket;
 
-namespace MServer
+namespace MClient
 {
     class Program
     {
         static void Main(string[] args)
         {
-            AsyncSocketListener.StartListening();
+            SyncSocketClient.StartClient();
         }
     }
 }

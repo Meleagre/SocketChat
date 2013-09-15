@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MServer", "MServer\MServer.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSocket", "MSocket\MSocket.csproj", "{DF0EAE36-77C2-46A9-BD9E-3034A9612510}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MClient", "MClient\MClient.csproj", "{AEB83FA0-3669-4E02-BCC3-1D8AD9F763F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{DF0EAE36-77C2-46A9-BD9E-3034A9612510}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF0EAE36-77C2-46A9-BD9E-3034A9612510}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF0EAE36-77C2-46A9-BD9E-3034A9612510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEB83FA0-3669-4E02-BCC3-1D8AD9F763F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEB83FA0-3669-4E02-BCC3-1D8AD9F763F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEB83FA0-3669-4E02-BCC3-1D8AD9F763F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEB83FA0-3669-4E02-BCC3-1D8AD9F763F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
