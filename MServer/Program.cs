@@ -9,9 +9,15 @@ namespace MServer
 {
     class Program
     {
+        static void MessageHandler(object source, ServerEventArgs arg)
+        {
+            Console.WriteLine(arg.Message);
+        }
+
         static void Main(string[] args)
         {
-            AsyncSocketListener.StartListening();
+            AsyncSocketListener.Instance.ServerEvent += MessageHandler;
+            AsyncSocketListener.Instance.StartListening();
         }
     }
 }

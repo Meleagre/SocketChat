@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="AsyncSocketListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerEventArgs.cs" />
     <Compile Include="StateObject.cs" />
     <Compile Include="SyncSocketClient.cs" />
   </ItemGroup>

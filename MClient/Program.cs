@@ -12,6 +12,7 @@ namespace MClient
         static void Main(string[] args)
         {
             SyncSocketClient.StartClient();
+            Console.Read();
         }
     }
 }
