@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncSocketListener.cs" />
+    <Compile Include="ClientEventArgs.cs" />
+    <Compile Include="ClientStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerEventArgs.cs" />
     <Compile Include="StateObject.cs" />

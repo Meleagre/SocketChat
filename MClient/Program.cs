@@ -9,9 +9,24 @@ namespace MClient
 {
     class Program
     {
+        static void PrintAnswer(object source, ClientEventArgs arg)
+        {
+            Console.WriteLine("Server reports: " + arg.Message);
+        }
+
         static void Main(string[] args)
         {
-            SyncSocketClient.StartClient();
+            SyncSocketClient client = new SyncSocketClient();
+            client.ClientEvent += PrintAnswer;
+            client.Start();
+            while (true)
+            {
+                string message = Console.ReadLine();
+                if (message.Contains("exit")) break;
+                string answer = client.SendMessage(message);
+                Console.WriteLine(answer);
+            }
+            client.Stop();
             Console.Read();
         }
     }

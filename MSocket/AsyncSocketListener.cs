@@ -26,25 +26,14 @@ namespace MSocket
         private IPAddress ipAddress;
 
         protected AsyncSocketListener() { }
-
-        private void SendMessage(string message)
-        {
-            ServerEventArgs arg = new ServerEventArgs();
-            if (ServerEvent != null)
-            {
-                arg.Message = message;
-                ServerEvent(this, arg);
-            }
-        }
         
         public void StartListening()
         {
             // Data buffer for incoming data.
             byte[] buffer = new byte[1024];
 
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            //this.ipAddress = ipHostInfo.AddressList.Last(addr => addr.AddressFamily == AddressFamily.InterNetwork);
-            this.ipAddress = IPAddress.Parse("127.0.0.1");
+            //IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            this.ipAddress = IPAddress.Any;
             IPEndPoint localEndPoint = new IPEndPoint(this.ipAddress, Port);
 
             Socket listener = new Socket(
@@ -55,15 +44,15 @@ namespace MSocket
             {
                 listener.Bind(localEndPoint);
                 listener.Listen(backlog: Backlog);
-                
+                Notify("Waiting for a connection...");
                 while (true)
                 {
                     // Set the event to nonsignaled state.
                     allDone.Reset();
 
+                    //SendMessage("Waiting for a connection...");
+
                     // Start an asynchrounous socket to listen for connections.
-                    //Console.WriteLine("Waiting for a connection...");
-                    SendMessage("Waiting for a connection...");
                     listener.BeginAccept(
                         new AsyncCallback(AcceptCallback), listener);
 
@@ -73,11 +62,10 @@ namespace MSocket
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Notify(e.ToString());
             }
 
-            //Console.WriteLine("\nPress ENTER to continue...");
-            SendMessage("\nPress ENTER to continue...");
+            Notify("\nPress ENTER to continue...");
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -125,7 +113,7 @@ namespace MSocket
                 {
                     // All the data has been read from the client.
                     // Display it on the console.
-                    SendMessage(String.Format("Read {0} bytes from socket. \n Data: {1}",
+                    Notify(String.Format("Read {0} bytes from socket. \n Data: {1}",
                         content.Length, content));
 
                     // Echo the data back to the client.
@@ -168,14 +156,24 @@ namespace MSocket
 
                 // Complete sending the data to remote device.
                 int bytesSent = handler.EndSend(ar);
-                SendMessage(String.Format("Sent {0} bytes to client.", bytesSent));
+                Notify(String.Format("Sent {0} bytes to client.", bytesSent));
 
                 handler.Shutdown(SocketShutdown.Both);
                 handler.Close();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Notify(e.ToString());
+            }
+        }
+
+        private void Notify(string message)
+        {
+            ServerEventArgs arg = new ServerEventArgs();
+            if (ServerEvent != null)
+            {
+                arg.Message = message;
+                ServerEvent(this, arg);
             }
         }
     }
