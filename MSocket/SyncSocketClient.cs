@@ -12,7 +12,7 @@ namespace MSocket
 
     public class SyncSocketClient : IDisposable
     {
-        public static readonly int Port = 11000;
+        public static readonly int Port = 55110;
         public static readonly string EofTag = "<EOF>";
         public event ClientEventHandler ClientEvent;
         public ClientStatus Status { get { return status; } }
@@ -35,26 +35,19 @@ namespace MSocket
             sender = new Socket(AddressFamily.InterNetwork, 
                 SocketType.Stream, ProtocolType.Tcp);
 
-            try
-            {
+            try {
                 sender.Connect(remoteEP);
-            }
-            catch (ArgumentNullException ane)
-            {
+                status = ClientStatus.Connected;
+                Notify(String.Format("Socket connected to {0}",
+                    sender.RemoteEndPoint.ToString()));
+
+            } catch (ArgumentNullException ane) {
                 Notify(String.Format("ArgumentNullException: {0}", ane.ToString()));
-            }
-            catch (SocketException se)
-            {
+            } catch (SocketException se) {
                 Notify(String.Format("SocketException: {0}", se.ToString()));
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Notify(String.Format("Unexpected exception: {0}", e.ToString()));
             }
-
-            status = ClientStatus.Connected;
-            Notify(String.Format("Socket connected to {0}",
-                sender.RemoteEndPoint.ToString()));
         }
 
         public string SendMessage(string message)
@@ -64,8 +57,9 @@ namespace MSocket
             byte[] byteMessage = Encoding.ASCII.GetBytes(message + EofTag);
             int bytesSent = sender.Send(byteMessage);
 
-            int bytesRec = sender.Receive(buffer);
-            return Encoding.ASCII.GetString(buffer, 0, bytesRec);
+            //int bytesRec = sender.Receive(buffer);
+            return "Sended Successfully.";
+            //return Encoding.ASCII.GetString(buffer, 0, bytesRec);
         }
 
         public void Stop()

@@ -39,7 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsyncSocketListener.cs" />
+    <Compile Include="NewConnectionEventArgs.cs" />
+    <Compile Include="Protocol.cs" />
+    <Compile Include="SocketListener.cs" />
     <Compile Include="ClientEventArgs.cs" />
     <Compile Include="ClientStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

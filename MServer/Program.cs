@@ -16,8 +16,8 @@ namespace MServer
 
         static void Main(string[] args)
         {
-            AsyncSocketListener.Instance.ServerEvent += MessageHandler;
-            AsyncSocketListener.Instance.StartListening();
+            SocketListener.Instance.ServerEvent += MessageHandler;
+            SocketListener.Instance.StartListening();
         }
     }
 }
