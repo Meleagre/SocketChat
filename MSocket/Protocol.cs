@@ -9,6 +9,6 @@ namespace MSocket
     internal static class Protocol
     {
         public const string CloseTag = "<CLOSE>";
-        public const string EndOfMessageTag = "<EOM>";
+        public const string EofTag = "<EOF>";
     }
 }

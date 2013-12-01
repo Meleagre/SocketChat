@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageRecievedEventArgs.cs" />
     <Compile Include="NewConnectionEventArgs.cs" />
     <Compile Include="Protocol.cs" />
     <Compile Include="SocketListener.cs" />

@@ -10,10 +10,9 @@ namespace MSocket
 {
     public delegate void ClientEventHandler(object source, ClientEventArgs arg);
 
-    public class SyncSocketClient : IDisposable
+    public class SocketClient : IDisposable
     {
         public static readonly int Port = 55110;
-        public static readonly string EofTag = "<EOF>";
         public event ClientEventHandler ClientEvent;
         public ClientStatus Status { get { return status; } }
         public IPAddress IPAddress { get { return IPAddress; } }
@@ -22,7 +21,7 @@ namespace MSocket
         private IPAddress ipAddress;
         private Socket sender;
 
-        public SyncSocketClient()
+        public SocketClient()
         {
             status = ClientStatus.Disconnected;
         }
@@ -54,12 +53,9 @@ namespace MSocket
         {
             byte[] buffer = new byte[1024];
 
-            byte[] byteMessage = Encoding.ASCII.GetBytes(message + EofTag);
+            byte[] byteMessage = Encoding.UTF8.GetBytes(message + Protocol.EofTag);
             int bytesSent = sender.Send(byteMessage);
-
-            //int bytesRec = sender.Receive(buffer);
             return "Sended Successfully.";
-            //return Encoding.ASCII.GetString(buffer, 0, bytesRec);
         }
 
         public void Stop()
@@ -89,13 +85,13 @@ namespace MSocket
                         sender.RemoteEndPoint.ToString()));
 
                     // Encode the data into bytes and send through the socket.
-                    byte[] message = Encoding.ASCII.GetBytes("This is a test" + EofTag);
+                    byte[] message = Encoding.UTF8.GetBytes("This is a test" + Protocol.EofTag);
                     int bytesSent = sender.Send(message);
 
                     // Receive the response from the remote device.
                     int bytesRec = sender.Receive(buffer);
                     Notify(String.Format("Echoed test = {0}",
-                        Encoding.ASCII.GetString(buffer, 0, bytesRec)));
+                        Encoding.UTF8.GetString(buffer, 0, bytesRec)));
 
                     sender.Shutdown(SocketShutdown.Both);
                     sender.Close();

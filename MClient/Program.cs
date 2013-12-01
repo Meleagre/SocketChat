@@ -16,7 +16,7 @@ namespace MClient
 
         static void Main(string[] args)
         {
-            SyncSocketClient client = new SyncSocketClient();
+            SocketClient client = new SocketClient();
             client.ClientEvent += PrintAnswer;
             client.Start();
             while (true)
