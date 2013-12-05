@@ -33,11 +33,13 @@ namespace MSocket
         private IPAddress _ipAddress;
         private IPEndPoint _localEndPoint;
         private Socket _listener;
+        private List<ClientHandler> _clientHandlers;
         private readonly int _bufferSize = 1024;
         private List<string> _messageHistory;
 
         protected SocketListener() 
         {
+            _clientHandlers = new List<ClientHandler>();
             _messageHistory = new List<string>();
         }
 
@@ -110,6 +112,9 @@ namespace MSocket
                 Byte[] buffer = new Byte[_bufferSize];
                 while (true)
                 {
+                    // Send string
+
+                    // Read to <EOF>
                     int bytesRecieved = handler.Receive(buffer);
                     message += Encoding.UTF8.GetString(buffer, 0, bytesRecieved);
                     if (message.IndexOf(Protocol.EofTag) > -1)
@@ -127,6 +132,7 @@ namespace MSocket
                     }
                 }
             });
+            //var thread = new Thread(action);
             thread.Start();
         }
 
