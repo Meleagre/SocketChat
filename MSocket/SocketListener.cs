@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace MSocket
 {
-    public delegate void ServerEventHandler(object source, ServerEventArgs arg);
-    public delegate void StartedListeningHandler(object source, EventArgs arg);
-    public delegate void NewConnectionHandler(object source, NewConnectionEventArgs arg);
-    public delegate void MessageReceivedHandler(object source, MessageReceivedEventArgs arg);
+    public delegate void ServerEventHandler(object source, ServerEventArgs e);
+    public delegate void StartedListeningHandler(object source, EventArgs e);
+    public delegate void NewConnectionHandler(object source, NewConnectionEventArgs e);
+    public delegate void MessageReceivedHandler(object source, MessageReceivedEventArgs e);
 
     public class SocketListener
     {
@@ -29,18 +29,18 @@ namespace MSocket
         public readonly int Backlog = 100;
 
         private static readonly SocketListener _instance = new SocketListener();
-        private ManualResetEvent _allDone = new ManualResetEvent(false);
         private IPAddress _ipAddress;
         private IPEndPoint _localEndPoint;
         private Socket _listener;
-        private List<ClientHandler> _clientHandlers;
+        private List<Socket> _clientHandlers;
         private readonly int _bufferSize = 1024;
         private List<string> _messageHistory;
 
-        protected SocketListener() 
+        protected SocketListener()
         {
-            _clientHandlers = new List<ClientHandler>();
+            _clientHandlers = new List<Socket>();
             _messageHistory = new List<string>();
+            MessageRecieved += SocketListener_MessageRecieved;
         }
 
         public void StartListening()
@@ -67,13 +67,13 @@ namespace MSocket
         {
             Thread thread = new Thread(() => 
             {
-                HttpListener httpListener = new HttpListener();
-                httpListener.Prefixes.Add("http://127.0.0.1:55225/");
+                var httpListener = new HttpListener();
+                httpListener.Prefixes.Add("http://localhost:9999/");
                 httpListener.Start();
                 var context = httpListener.GetContext();
                 var request = context.Request;
                 var response = context.Response;
-                string responseString = MessagesAsHtml();
+                string responseString = GetMessagesAsHtml();
                 byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
                 response.ContentLength64 = buffer.Length;
                 Stream output = response.OutputStream;
@@ -81,6 +81,7 @@ namespace MSocket
                 output.Close();
                 httpListener.Stop();
             });
+            thread.IsBackground = true;
             thread.Start();
         }
 
@@ -93,9 +94,11 @@ namespace MSocket
                     try
                     {
                         Socket handler = _listener.Accept();
+                        handler.ReceiveTimeout = 10;
+                        _clientHandlers.Add(handler);
                         var remoteEndPoint = handler.RemoteEndPoint as IPEndPoint;
-                        Notify(String.Format("Connection from {0}:{1} accepted.", 
-                            remoteEndPoint.Address, remoteEndPoint.Port));
+                        var localEndPoint = handler.LocalEndPoint as IPEndPoint;
+                        OnNewConnection(localEndPoint, remoteEndPoint);
                         HandleClient(handler);
                     }
                     catch (Exception) { }
@@ -108,35 +111,55 @@ namespace MSocket
         {
             Thread thread = new Thread(() =>
             {
-                string message = String.Empty;
-                Byte[] buffer = new Byte[_bufferSize];
+                var name = RandomString.New(5);
+                var message = String.Empty;
+                var buffer = new Byte[_bufferSize];
                 while (true)
                 {
-                    // Send string
-
-                    // Read to <EOF>
-                    int bytesRecieved = handler.Receive(buffer);
-                    message += Encoding.UTF8.GetString(buffer, 0, bytesRecieved);
-                    if (message.IndexOf(Protocol.EofTag) > -1)
+                    try
                     {
-                        Notify(String.Format("Read {0} bytes from socket. \n Data: {1}",
-                            message.Length, message));
-                        lock (_messageHistory) _messageHistory.Add(message);
-                        message = String.Empty;
+                        int bytesReceived;
+                        lock (handler) bytesReceived = handler.Receive(buffer);
+                        message += Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+                        // End of message.
+                        if (message.IndexOf(Protocol.EofTag) > -1)
+                        {
+                            message = name + " : " + message.Replace(Protocol.EofTag, String.Empty);
+                            OnMessageReceived(message, handler.RemoteEndPoint as IPEndPoint);
+                            lock (_messageHistory) _messageHistory.Add(message);
+                            message = String.Empty;
+                        }
+                        if (message.IndexOf(Protocol.CloseTag) > -1)
+                        {
+                            lock (handler)
+                            {
+                                handler.Shutdown(SocketShutdown.Both);
+                                handler.Close();
+                            }
+                            break;
+                        }
                     }
-                    if (message.IndexOf(Protocol.CloseTag) > -1)
-                    {
-                        handler.Shutdown(SocketShutdown.Both);
-                        handler.Close();
-                        break;
-                    }
+                    catch (SocketException) { }
                 }
             });
-            //var thread = new Thread(action);
+            thread.IsBackground = true;
             thread.Start();
         }
 
-        private string MessagesAsHtml()
+        private void SocketListener_MessageRecieved(object source, MessageReceivedEventArgs e)
+        {
+            foreach (var handler in _clientHandlers)
+            {
+                lock (handler)
+                {
+                    if (handler.Connected == false) break;
+                    var byteMessage = Encoding.UTF8.GetBytes(e.Message + Protocol.EofTag);
+                    handler.Send(byteMessage);
+                }
+            }
+        }
+
+        private string GetMessagesAsHtml()
         {
             var result = new StringBuilder();
             result.Append("<HTML><BODY>");
@@ -155,33 +178,34 @@ namespace MSocket
         private void Notify(string message)
         {
             if (ServerEvent == null) return;
-            var arg = new ServerEventArgs();
-            arg.Message = message;
-            ServerEvent(this, arg);
+            var e = new ServerEventArgs();
+            e.Message = message;
+            ServerEvent(this, e);
         }
 
         private void OnStartedListening()
         {
             if (StartedListening == null) return;
-            var arg = new EventArgs();
-            StartedListening(this, arg);
+            var e = new EventArgs();
+            StartedListening(this, e);
         }
 
         private void OnNewConnection(IPEndPoint localEP, IPEndPoint remoteEP)
         {
             if (NewConnection == null) return;
-            var arg = new NewConnectionEventArgs();
-            arg.LocalEndPoint = localEP;
-            arg.RemoteEndPoint = remoteEP;
-            NewConnection(this, arg);
+            var e = new NewConnectionEventArgs();
+            e.LocalEndPoint = localEP;
+            e.RemoteEndPoint = remoteEP;
+            NewConnection(this, e);
         }
 
         private void OnMessageReceived(string message, IPEndPoint remoteEP)
         {
             if (MessageRecieved == null) return;
-            var arg = new MessageReceivedEventArgs();
-            arg.Message = message;
-            arg.RemoteEndPoint = remoteEP;
+            var e = new MessageReceivedEventArgs();
+            e.Message = message;
+            e.RemoteEndPoint = remoteEP;
+            MessageRecieved(this, e);
         }
     }
 }

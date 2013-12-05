@@ -40,16 +40,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientHandler.cs" />
-    <Compile Include="MessageRecievedEventArgs.cs" />
-    <Compile Include="NewConnectionEventArgs.cs" />
+    <Compile Include="EventArgs\MessageRecievedEventArgs.cs" />
+    <Compile Include="EventArgs\NewConnectionEventArgs.cs" />
     <Compile Include="Protocol.cs" />
+    <Compile Include="RandomString.cs" />
     <Compile Include="SocketListener.cs" />
-    <Compile Include="ClientEventArgs.cs" />
+    <Compile Include="EventArgs\ClientEventArgs.cs" />
     <Compile Include="ClientStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerEventArgs.cs" />
+    <Compile Include="EventArgs\ServerEventArgs.cs" />
     <Compile Include="StateObject.cs" />
-    <Compile Include="SyncSocketClient.cs" />
+    <Compile Include="SocketClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

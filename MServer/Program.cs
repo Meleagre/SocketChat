@@ -9,15 +9,30 @@ namespace MServer
 {
     class Program
     {
-        static void MessageHandler(object source, ServerEventArgs arg)
+        static void Server_Notification(object source, ServerEventArgs e)
         {
-            Console.WriteLine(arg.Message);
+            Console.WriteLine(e.Message);
+        }
+
+        static void Server_NewConnection(object source, NewConnectionEventArgs e)
+        {
+            Console.WriteLine("New connection from {0}:{1} to {2}:{3}.",
+                e.RemoteEndPoint.Address, e.RemoteEndPoint.Port,
+                e.LocalEndPoint.Address, e.LocalEndPoint.Port);
+        }
+
+        static void Server_MessageRecieved(object source, MessageReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Message);
         }
 
         static void Main(string[] args)
         {
-            SocketListener.Instance.ServerEvent += MessageHandler;
+            SocketListener.Instance.ServerEvent += Server_Notification;
+            SocketListener.Instance.NewConnection += Server_NewConnection;
+            SocketListener.Instance.MessageRecieved += Server_MessageRecieved;
             SocketListener.Instance.StartListening();
         }
+
     }
 }

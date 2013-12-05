@@ -9,9 +9,9 @@ namespace MClient
 {
     class Program
     {
-        static void PrintAnswer(object source, ClientEventArgs arg)
+        static void PrintAnswer(object source, ClientEventArgs e)
         {
-            Console.WriteLine("Server reports: " + arg.Message);
+            Console.WriteLine(e.Message);
         }
 
         static void Main(string[] args)
@@ -23,8 +23,7 @@ namespace MClient
             {
                 string message = Console.ReadLine();
                 if (message.Contains("exit")) break;
-                string answer = client.SendMessage(message);
-                Console.WriteLine(answer);
+                client.SendMessage(message);
             }
             client.Stop();
             Console.Read();
