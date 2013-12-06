@@ -10,6 +10,7 @@ namespace MSocket
     {
         public const string CloseTag = "<CLOSE>";
         public const string EofTag = "<EOF>";
+        public const string ImaServerTag = "<IMASERVER>";
         public const string WhoIsServerTag = "<WHOISSERVER?>";
     }
 }

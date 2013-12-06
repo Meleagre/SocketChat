@@ -26,24 +26,33 @@ namespace MSocket
         {
         }
 
-        public void FindServer()
+        public IPEndPoint LookForServer()
         {
-            var broadcast = IPAddress.Broadcast;
+            var ipAddress = IPAddress.Any;
             var socket = new Socket(AddressFamily.InterNetwork, 
                 SocketType.Dgram, ProtocolType.Udp);
-            var localEndPoint = new IPEndPoint(broadcast, Port);
-            socket.Connect(localEndPoint);
-            var byteMessage = Encoding.UTF8.GetBytes(Protocol.WhoIsServerTag);
+            EndPoint localEndPoint = new IPEndPoint(ipAddress, Port);
+            socket.Bind(localEndPoint);
             while (true)
             {
+                byte[] data = new byte[1024];
+                socket.ReceiveFrom(data, ref localEndPoint);
+                var ep = localEndPoint as IPEndPoint;
+                var message = Encoding.UTF8.GetString(data);
+                if (message.Contains(Protocol.ImaServerTag))
+                {
+                    Notify(String.Format("Server is found at {0}:{1}", ep.Address, ep.Port));
+                    return ep;
+                }
             }
         }
 
         public void Start()
         {
-            //FindServer();
-
-            _ipAddress = IPAddress.Parse("127.0.0.1");
+            // ISSUE Not asynchronous
+            var serverEndPoint = LookForServer();
+            _ipAddress = serverEndPoint.Address;
+            //_ipAddress = IPAddress.Parse("127.0.0.1");
             var remoteEP = new IPEndPoint(_ipAddress, Port);
             _sender = new Socket(AddressFamily.InterNetwork, 
                 SocketType.Stream, ProtocolType.Tcp);

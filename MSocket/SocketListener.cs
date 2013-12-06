@@ -54,6 +54,7 @@ namespace MSocket
                 _listener.Bind(_localEndPoint);
                 _listener.Listen(Backlog);
                 Notify("Waiting for a connection...");
+                BroadcastInfo();
                 HandleIncomingConnections();
                 HandleHttpConnection();
             }
@@ -121,7 +122,6 @@ namespace MSocket
                         int bytesReceived;
                         lock (handler) bytesReceived = handler.Receive(buffer);
                         message += Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-                        // End of message.
                         if (message.IndexOf(Protocol.EofTag) > -1)
                         {
                             message = name + " : " + message.Replace(Protocol.EofTag, String.Empty);
@@ -140,6 +140,27 @@ namespace MSocket
                         }
                     }
                     catch (SocketException) { }
+                }
+            });
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        public void BroadcastInfo()
+        {
+            Thread thread = new Thread(() =>
+            {
+                var socket = new Socket(AddressFamily.InterNetwork,
+                    SocketType.Dgram, ProtocolType.Udp);
+                socket.EnableBroadcast = true;
+                socket.DontFragment = true;
+                var localEndPoint = new IPEndPoint(IPAddress.Broadcast, Port);
+                socket.Connect(localEndPoint);
+                var byteMessage = Encoding.UTF8.GetBytes(Protocol.ImaServerTag);
+                while (true)
+                {
+                    socket.Send(byteMessage);
+                    Thread.Sleep(1000);
                 }
             });
             thread.IsBackground = true;
