@@ -8,3 +8,8 @@ C:\dev\Projects\ClientServerApps\MSocket\obj\Debug\MSocket.dll
 C:\dev\Projects\ClientServerApps\MSocket\bin\Debug\MSocket.dll
 C:\dev\Projects\ClientServerApps\MSocket\bin\Debug\MSocket.pdb
 C:\dev\Projects\ClientServerApps\MSocket\obj\Debug\MSocket.pdb
+E:\gh\ClientServerModel\MSocket\bin\Debug\MSocket.dll
+E:\gh\ClientServerModel\MSocket\bin\Debug\MSocket.pdb
+E:\gh\ClientServerModel\MSocket\obj\Debug\MSocket.csprojResolveAssemblyReference.cache
+E:\gh\ClientServerModel\MSocket\obj\Debug\MSocket.dll
+E:\gh\ClientServerModel\MSocket\obj\Debug\MSocket.pdb
