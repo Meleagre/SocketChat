@@ -71,15 +71,18 @@ namespace MSocket
                 var httpListener = new HttpListener();
                 httpListener.Prefixes.Add("http://localhost:9999/");
                 httpListener.Start();
-                var context = httpListener.GetContext();
-                var request = context.Request;
-                var response = context.Response;
-                string responseString = GetMessagesAsHtml();
-                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                response.ContentLength64 = buffer.Length;
-                Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                while (true)
+                {
+                    var context = httpListener.GetContext();
+                    var request = context.Request;
+                    var response = context.Response;
+                    string responseString = GetMessagesAsHtml();
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = buffer.Length;
+                    Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+                    output.Close();
+                }
                 httpListener.Stop();
             });
             thread.IsBackground = true;
@@ -173,7 +176,7 @@ namespace MSocket
             {
                 lock (handler)
                 {
-                    if (handler.Connected == false) break;
+                    if (handler.Connected == false) continue;
                     var byteMessage = Encoding.UTF8.GetBytes(e.Message + Protocol.EofTag);
                     handler.Send(byteMessage);
                 }

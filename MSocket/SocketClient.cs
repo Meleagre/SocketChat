@@ -52,7 +52,6 @@ namespace MSocket
             // ISSUE Not asynchronous
             var serverEndPoint = LookForServer();
             _ipAddress = serverEndPoint.Address;
-            //_ipAddress = IPAddress.Parse("127.0.0.1");
             var remoteEP = new IPEndPoint(_ipAddress, Port);
             _sender = new Socket(AddressFamily.InterNetwork, 
                 SocketType.Stream, ProtocolType.Tcp);
